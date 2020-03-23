@@ -16,7 +16,7 @@ cron.schedule('* * * * *', function () {
 });
 
 exports.doc = function (req, res) {
-  res.redirect('https://github.com/apfeuti/covid_19/tree/rest-api/rest');
+  res.redirect('https://github.com/apfeuti/covid19-rest');
 };
 
 exports.allData = function (req, res) {
