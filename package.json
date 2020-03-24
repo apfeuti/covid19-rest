@@ -1,5 +1,5 @@
 {
-  "name": "openzh-covid19-rest-api",
+  "name": "ovid19-rest",
   "version": "1.0.0",
   "description": "A rest-api for the COVID19-data in Switzerland, collected by openZH. See https://github.com/openZH/covid_19",
   "main": "server.js",
@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/openZH/covid_19.git"
+    "url": "git+https://github.com/apfeuti/covid19-rest.git"
   },
   "keywords": [
     "covid19",
@@ -17,11 +17,11 @@
     "openZH"
   ],
   "author": "Andreas Pfeuti",
-  "license": "CC-BY-4.0",
+  "license": "MIT",
   "bugs": {
-    "url": "https://github.com/openZH/covid_19/issues"
+    "url": "https://github.com/apfeuti/covid19-rest"
   },
-  "homepage": "https://github.com/openZH/covid_19#readme",
+  "homepage": "https://github.com/apfeuti/covid19-rest#readme",
   "devDependencies": {
     "nodemon": "^2.0.2"
   },
