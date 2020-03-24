@@ -10,6 +10,8 @@ var express = require('express'),
 var routes = require('./api/routes');
 routes(app);
 
+app.use(express.static('static'));
+
 app.use(function(req, res) {
     res.status(404).send({url: req.originalUrl + ' not found. This API is work in progress and backward-compatibility is not guaranteed yet. Please consult the api-doc frequently: https://github.com/apfeuti/covid_19/tree/rest-api/rest'})
 });
