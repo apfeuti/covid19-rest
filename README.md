@@ -40,9 +40,9 @@ Install [Node.js](https://nodejs.org) on your system. Developed with 12.16.1 LTS
 
 **Clone this repo**
 
-`git clone https://github.com/openZH/covid_19.git`
+`git clone https://github.com/apfeuti/covid19-rest.git`
 
-`cd covid_19/rest`
+`cd covid19-rest`
 
 **Install**
 
