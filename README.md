@@ -87,4 +87,4 @@ Install [Node.js](https://nodejs.org) on your system. Developed with 12.16.1 LTS
 
 **Open in browser**
 
-[http://localhost:3000/api/openzh/v1/all]
+[http://localhost:3000/api/openzh/v1/all](http://localhost:3000/api/openzh/v1/all)
