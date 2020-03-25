@@ -19,10 +19,10 @@ The data can be filtered by country, area and date.
 #### Query parameters
 On all calls listed above, you can add optionally the following query-parameters.
 
-|Parameter              | Remark                                             | Example call                                                                                                                                                            | 
-|-----------------------|----------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| date=\<yyyy-mm-dd>    | only data for the given date. Format: yyyy-mm-dd   | [https://covid19-rest.herokuapp.com/api/openzh/v1/country/CH?date=2020-03-23](https://covid19-rest.herokuapp.com/api/openzh/v1/country/CH?date=2020-03-23)              |
-| output=csv            | output in csv instead of json                      | [https://covid19-rest.herokuapp.com/api/openzh/v1/country/CH?date=2020-03-23&output=csv](https://covid19-rest.herokuapp.com/api/openzh/v1/country/CH?date=2020-03-23&output=csv)   |
+|Parameter              | Remark                                             | Example call                                                                             | 
+|-----------------------|----------------------------------------------------|------------------------------------------------------------------------------------------|
+| date=\<yyyy-mm-dd>    | only data for the given date. Format: yyyy-mm-dd   | [https://covid19-rest.herokuapp.com/api/openzh/v1/country/CH?date=2020-03-23]            |
+| output=csv            | output in csv instead of json                      | [https://covid19-rest.herokuapp.com/api/openzh/v1/country/CH?date=2020-03-23&output=csv] |
 
 #### Output json
 ```json
