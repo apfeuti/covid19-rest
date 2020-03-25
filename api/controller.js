@@ -5,7 +5,8 @@ const {Parser} = require('json2csv');
 const request = require('request');
 const cron = require('node-cron');
 
-var allData;
+var allDataCH;
+var allDataFL;
 
 // initial load
 loadData();
@@ -20,40 +21,43 @@ exports.doc = function (req, res) {
 };
 
 exports.allData = function (req, res) {
-    makeOutput(allData, req.query, res);
-
-};
-
-exports.findByDate = function (req, res) {
-    var data = allData.filter(row => row.date === req.params.date);
+    var data = applyFilters(allDataCH.concat(allDataFL), req.query);
     makeOutput(data, req.query, res);
 
 };
+
+exports.findByCountry = function (req, res) {
+    var data = [] ;
+
+    if (req.params.country.toUpperCase() === 'CH') {
+        data = allDataCH;
+    }  else if (req.params.country.toUpperCase() === 'FL') {
+        data = allDataFL;
+    }
+    data = applyFilters(data, req.query);
+    makeOutput(data, req.query, res);
+
+};
+
 
 exports.findByArea = function (req, res) {
-    var data = allData.filter(row => row.abbreviation_canton_and_fl.toUpperCase() === req.params.area.toUpperCase());
-    makeOutput(data, req.query, res);
-};
+    var data = [];
 
-exports.findByDateAndArea = function (req, res) {
-    var data = allData.filter(row => row.date === req.params.date
-        && row.abbreviation_canton_and_fl.toUpperCase() === req.params.area.toUpperCase()
-    );
+    // no area support for FL
+    if (req.params.country.toUpperCase() === 'CH') {
+        data = allDataCH.filter(row => row.abbreviation_canton_and_fl.toUpperCase() === req.params.area.toUpperCase());
+    }
+    data = applyFilters(data, req.query);
     makeOutput(data, req.query, res);
 };
 
 function loadData() {
-    allData = [];
-    const areas = ['AG', 'AI', 'AR', 'BE', 'BL', 'BS', 'FR', 'GE', 'GL', 'GR', 'JU', 'LU', 'NE', 'NW', 'OW', 'SH', 'SZ', 'SO', 'SG', 'TG', 'TI', 'UR', 'VS', 'VD', 'ZG', 'ZH', 'FL'];
+    allDataCH = [];
+    const areas = ['AG', 'AI', 'AR', 'BE', 'BL', 'BS', 'FR', 'GE', 'GL', 'GR', 'JU', 'LU', 'NE', 'NW', 'OW', 'SH', 'SZ', 'SO', 'SG', 'TG', 'TI', 'UR', 'VS', 'VD', 'ZG', 'ZH'];
     const promises = [];
 
     areas.forEach((area, index) => {
-        var dataLocation;
-        if (area === 'FL') {
-            dataLocation = 'https://raw.githubusercontent.com/openZH/covid_19/master/fallzahlen_kanton_total_csv/COVID19_Fallzahlen_' + area + '_total.csv';
-        } else {
-            dataLocation = 'https://raw.githubusercontent.com/openZH/covid_19/master/fallzahlen_kanton_total_csv/COVID19_Fallzahlen_Kanton_' + area + '_total.csv';
-        }
+        var dataLocation = 'https://raw.githubusercontent.com/openZH/covid_19/master/fallzahlen_kanton_total_csv/COVID19_Fallzahlen_Kanton_' + area + '_total.csv';
 
         promises.push(
             csv({
@@ -73,10 +77,22 @@ function loadData() {
                     });
                 })
         );
+
+        csv({
+            checkType: true
+        })
+            .fromStream(request.get('https://raw.githubusercontent.com/openZH/covid_19/master/fallzahlen_kanton_total_csv/COVID19_Fallzahlen_FL_total.csv'))
+            .then(dataAsJson => allDataFL = dataAsJson);
+
     });
 
    Promise.all(promises)
-       .then(jsonPerArea => allData = allData.concat(jsonPerArea).flat());
+       .then(jsonPerArea => allDataCH = allDataCH.concat(jsonPerArea).flat());
+
+}
+
+function applyFilters(data, query) {
+    return query.date ? data.filter(row => row.date === query.date) : data;
 
 }
 

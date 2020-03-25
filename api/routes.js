@@ -7,16 +7,13 @@ module.exports = function(app) {
     app.route('/api/doc')
         .get(controller.doc);
 
-    app.route(openZHV1)
+    app.route(openZHV1 + '/all')
         .get(controller.allData);
 
-    app.route(openZHV1 + '/date/:date')
-        .get(controller.findByDate);
+    app.route(openZHV1 + '/country/:country')
+        .get(controller.findByCountry);
 
-    app.route(openZHV1 + '/area/:area')
+    app.route(openZHV1 + '/country/:country/area/:area')
         .get(controller.findByArea);
-
-    app.route(openZHV1 + '/date/:date/area/:area')
-        .get(controller.findByDateAndArea);
 
 };
