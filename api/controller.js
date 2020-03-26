@@ -22,7 +22,10 @@ exports.doc = function (req, res) {
 
 exports.allData = function (req, res) {
     var data = applyFilters(allDataCH.concat(allDataFL), req.query);
-    makeOutput(data, req.query, res);
+    var outputData = {};
+    outputData['totals'] = calculateTotalsIfJson(data, req);
+    outputData['records'] = data;
+    makeOutput(outputData, req.query, res);
 
 };
 
@@ -34,8 +37,12 @@ exports.findByCountry = function (req, res) {
     }  else if (req.params.country.toUpperCase() === 'FL') {
         data = allDataFL;
     }
-    data = applyFilters(data, req.query);
-    makeOutput(data, req.query, res);
+
+    var filteredData = applyFilters(data, req.query);
+    var outputData = {};
+    outputData['totals'] = calculateTotalsIfJson(filteredData, req);
+    outputData['records'] = filteredData;
+    makeOutput(outputData, req.query, res);
 
 };
 
@@ -47,8 +54,10 @@ exports.findByArea = function (req, res) {
     if (req.params.country.toUpperCase() === 'CH') {
         data = allDataCH.filter(row => row.abbreviation_canton_and_fl.toUpperCase() === req.params.area.toUpperCase());
     }
-    data = applyFilters(data, req.query);
-    makeOutput(data, req.query, res);
+    var filteredData = applyFilters(data, req.query);
+    var outputData = {};
+    outputData['records'] = filteredData;
+    makeOutput(outputData, req.query, res);
 };
 
 function loadData() {
@@ -100,10 +109,10 @@ function makeOutput(data, query, res) {
     if (query.output && query.output.toLowerCase() === 'csv') {
 
         res.set('Content-Type', 'text/plain');
-        if (data && data.length > 0) {
+        if (data.records && data.records.length > 0) {
             const opts = {"quote": ''};
             const jsonParser = new Parser(opts);
-            res.send(jsonParser.parse(data));
+            res.send(jsonParser.parse(data.records));
         } else {
             res.send('');
         }
@@ -111,3 +120,52 @@ function makeOutput(data, query, res) {
         res.json(data);
     }
 }
+
+function calculateTotalsIfJson(data, req) {
+    if ((req.query.output && req.query.output.toLowerCase() === 'csv') || data.length === 0) {
+        return null;
+    }
+
+    var groupedByArea = groupBy(data, 'abbreviation_canton_and_fl');
+    var mostRecentOfEachArea = [];
+    Object.entries(groupedByArea).forEach(([key, value]) => {
+        // from each area-array, we take only the last-entry (this is the most recent record, since the data are already sorted by date)
+        mostRecentOfEachArea.push(value.slice(-1));
+    });
+
+    mostRecentOfEachArea = mostRecentOfEachArea.flat();
+
+
+    return  {
+        ncumul_tested: mostRecentOfEachArea.map(row => parseInt(row.ncumul_tested) || 0).reduce((acc, value) => acc + value),
+        ncumul_conf: mostRecentOfEachArea.map(row => parseInt(row.ncumul_conf) || 0).reduce((acc, value) => acc + value),
+        ncumul_hosp: mostRecentOfEachArea.map(row => parseInt(row.ncumul_hosp) || 0).reduce((acc, value) => acc + value),
+        ncumul_ICU: mostRecentOfEachArea.map(row => parseInt(row.ncumul_ICU) || 0).reduce((acc, value) => acc + value),
+        ncumul_vent: mostRecentOfEachArea.map(row => parseInt(row.ncumul_vent) || 0).reduce((acc, value) => acc + value),
+        ncumul_released: mostRecentOfEachArea.map(row => parseInt(row.ncumul_released) || 0).reduce((acc, value) => acc + value),
+        ncumul_deceased: mostRecentOfEachArea.map(row => parseInt(row.ncumul_deceased) || 0).reduce((acc, value) => acc + value)
+    };
+}
+
+// credits goes to https://stackoverflow.com/questions/14446511/most-efficient-method-to-groupby-on-an-array-of-objects
+var groupBy = function(data, key) { // `data` is an array of objects, `key` is the key (or property accessor) to group by
+                                    // reduce runs this anonymous function on each element of `data` (the `item` parameter,
+                                    // returning the `storage` parameter at the end
+    return data.reduce(function(storage, item) {
+        // get the first instance of the key by which we're grouping
+        var group = item[key];
+
+        // set `storage` for this instance of group to the outer scope (if not empty) or initialize it
+        storage[group] = storage[group] || [];
+
+        // add this item to its group within `storage`
+        storage[group].push(item);
+
+        // return the updated storage to the reduce function, which will then loop through the next
+        return storage;
+    }, {}); // {} is the initial value of the storage
+};
+
+//console.log(groupBy(['one', 'two', 'three'], 'length'));
+
+// => {3: ["one", "two"], 5: ["three"]}

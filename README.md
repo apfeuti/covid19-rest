@@ -1,5 +1,5 @@
 # COVID19 REST-API
-This is a REST-API to get data about COVID19 (new corona-virus) cases. Data sources are [openZH](https://github.com/openZH/covid_19/tree/master/fallzahlen_kanton_total_csv) (for detailed figures about Switzerland) and [Johns Hopkins University](https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_time_series) (for figures about the world - not yet implemented).
+This is a REST-API to get data about COVID19 (new corona-virus) cases. Data sources are [openZH](https://github.com/openZH/covid_19/tree/master/fallzahlen_kanton_total_csv) (for detailed figures about Switzerland) and [Johns Hopkins University](https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_time_series) (for figures about the world - *not yet implemented*).
 
 The data can be filtered by country, area and date.
 
@@ -26,35 +26,49 @@ On all calls listed above, you can add optionally the following query-parameters
 
 #### Output json
 ```json
-[
- {
-    "date": "2020-03-25",
-    "time": "",
-    "abbreviation_canton_and_fl": "GR",
-    "ncumul_tested": "",
-    "ncumul_conf": 322,
-    "ncumul_hosp": 43,
-    "ncumul_ICU": "",
-    "ncumul_vent": "",
-    "ncumul_released": "",
-    "ncumul_deceased": 6,
-    "source": "https://www.gr.ch/DE/institutionen/verwaltung/djsg/ga/coronavirus/info/Seiten/Start.aspx"
+{
+  "totals": {
+    "ncumul_tested": 0,
+    "ncumul_conf": 11755,
+    "ncumul_hosp": 1316,
+    "ncumul_ICU": 199,
+    "ncumul_vent": 50,
+    "ncumul_released": 443,
+    "ncumul_deceased": 193
   },
-  {
-    "date": "2020-03-19",
-    "time": "16:00",
-    "abbreviation_canton_and_fl": "JU",
-    "ncumul_tested": "",
-    "ncumul_conf": 27,
-    "ncumul_hosp": 6,
-    "ncumul_ICU": "",
-    "ncumul_vent": "",
-    "ncumul_released": "",
-    "ncumul_deceased": "",
-    "source": "https://www.jura.ch/fr/Autorites/Coronavirus/Accueil/Coronavirus-Informations-officielles-a-la-population-jurassienne.html"
-  }
-]
+  "records": [
+    {
+      "date": "2020-02-28",
+      "time": "15:00",
+      "abbreviation_canton_and_fl": "AG",
+      "ncumul_tested": "",
+      "ncumul_conf": 1,
+      "ncumul_hosp": "",
+      "ncumul_ICU": "",
+      "ncumul_vent": "",
+      "ncumul_released": "",
+      "ncumul_deceased": "",
+      "source": "https://www.ag.ch/media/kanton_aargau/themen_1/coronavirus_1/20200228_KFS_20200106_Coronavirus_Lagebulletin_AG_Unterschrieben.pdf"
+    },
+    {
+      "date": "2020-03-02",
+      "time": "18:00",
+      "abbreviation_canton_and_fl": "AG",
+      "ncumul_tested": "",
+      "ncumul_conf": 2,
+      "ncumul_hosp": "",
+      "ncumul_ICU": "",
+      "ncumul_vent": "",
+      "ncumul_released": "",
+      "ncumul_deceased": "",
+      "source": "https://www.ag.ch/media/kanton_aargau/themen_1/coronavirus_1/200302_KFS_Coronavirus_Lagebulletin_2.pdf"
+    },
+    ....
+  ]
+}
 ```
+**Remark:** 'totals' are available by /all and /country. It's the sum over all countries/areas, hence you can get the totals for Switzerland with /country/CH.
+If no date-query-parameter is set, the last day per area is taken to build the sum.
 
 #### Ouptut csv
 ```
@@ -63,6 +77,7 @@ date,time,abbreviation_canton_and_fl,ncumul_tested,ncumul_conf,ncumul_hosp,ncumu
 2020-03-23,10:00,AR,,30,7,,,,1,https://www.ar.ch/verwaltung/departement-gesundheit-und-soziales/amt-fuer-gesundheit/informationsseite-coronavirus/,,,,,
 2020-03-23,,BE,,470,,,,,5,https://www.besondere-lage.sites.be.ch/besondere-lage_sites/de/index/corona/index.html,,,,,
 ```
+**Remark:** There is no 'totals' available in csv-output.
 
 ## Developers
 To enhance / adapt this REST-API follow this steps.
