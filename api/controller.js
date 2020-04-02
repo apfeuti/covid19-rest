@@ -110,8 +110,7 @@ function makeOutput(data, query, res) {
 
         res.set('Content-Type', 'text/plain');
         if (data.records && data.records.length > 0) {
-            const opts = {"quote": ''};
-            const jsonParser = new Parser(opts);
+            const jsonParser = new Parser();
             res.send(jsonParser.parse(data.records));
         } else {
             res.send('');
