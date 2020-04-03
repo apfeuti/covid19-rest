@@ -1,7 +1,7 @@
 # COVID19 REST-API
 This is a REST-API to get data about COVID19 (new corona-virus) cases.
 Data sources are
-[openZH](https://github.com/openZH/covid_19/tree/master/fallzahlen_kanton_total_csv)
+[Open Data Kanton Zürich (openZH)](https://github.com/openZH/covid_19/tree/master/fallzahlen_kanton_total_csv)
 (for **detailed figures about Switzerland**) and
 [Johns Hopkins University](https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_daily_reports)
 (for figures about the world - **including detailed data on city-level
