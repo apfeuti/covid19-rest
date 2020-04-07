@@ -34,42 +34,55 @@ On all calls listed above, you can add optionally the following query-parameters
 
 #### Output json
 ```json
-{
-  "totals": {
-    "ncumul_tested": 0,
-    "ncumul_conf": 11755,
-    "ncumul_hosp": 1316,
-    "ncumul_ICU": 199,
-    "ncumul_vent": 50,
-    "ncumul_released": 443,
-    "ncumul_deceased": 193
+{"totals": {
+    "ncumul_tested_fwd": 8219,
+    "ncumul_conf_fwd": 6561,
+    "ncumul_hosp_fwd": 906,
+    "ncumul_ICU_fwd": 140,
+    "ncumul_vent_fwd": 87,
+    "ncumul_released_fwd": 177,
+    "ncumul_deceased_fwd": 96
   },
   "records": [
     {
-      "date": "2020-02-28",
-      "time": "15:00",
+      "date": "2020-03-22",
+      "time": "12:00",
       "abbreviation_canton_and_fl": "AG",
       "ncumul_tested": "",
-      "ncumul_conf": 1,
+      "ncumul_conf": 232,
       "ncumul_hosp": "",
       "ncumul_ICU": "",
       "ncumul_vent": "",
       "ncumul_released": "",
-      "ncumul_deceased": "",
-      "source": "https://www.ag.ch/media/kanton_aargau/themen_1/coronavirus_1/20200228_KFS_20200106_Coronavirus_Lagebulletin_AG_Unterschrieben.pdf"
+      "ncumul_deceased": 1,
+      "source": "https://www.ag.ch/de/aktuelles/medienportal/medienmitteilung/medienmitteilungen/mediendetails_139237.jsp",
+      "ncumul_tested_fwd": 0,
+      "ncumul_conf_fwd": 232,
+      "ncumul_hosp_fwd": 25,
+      "ncumul_ICU_fwd": 4,
+      "ncumul_vent_fwd": 2,
+      "ncumul_released_fwd": 4,
+      "ncumul_deceased_fwd": 1
     },
     {
-      "date": "2020-03-02",
-      "time": "18:00",
-      "abbreviation_canton_and_fl": "AG",
+      "date": "2020-03-22",
+      "time": "",
+      "abbreviation_canton_and_fl": "BL",
       "ncumul_tested": "",
-      "ncumul_conf": 2,
-      "ncumul_hosp": "",
-      "ncumul_ICU": "",
+      "ncumul_conf": 289,
+      "ncumul_hosp": 40,
+      "ncumul_ICU": 7,
       "ncumul_vent": "",
-      "ncumul_released": "",
-      "ncumul_deceased": "",
-      "source": "https://www.ag.ch/media/kanton_aargau/themen_1/coronavirus_1/200302_KFS_Coronavirus_Lagebulletin_2.pdf"
+      "ncumul_released": 21,
+      "ncumul_deceased": 3,
+      "source": "https://www.baselland.ch/politik-und-behorden/direktionen/volkswirtschafts-und-gesundheitsdirektion/medienmitteilungen/update-289-bestaetigte-faelle-in-basel-landschaft",
+      "ncumul_tested_fwd": 0,
+      "ncumul_conf_fwd": 289,
+      "ncumul_hosp_fwd": 40,
+      "ncumul_ICU_fwd": 7,
+      "ncumul_vent_fwd": 0,
+      "ncumul_released_fwd": 21,
+      "ncumul_deceased_fwd": 3
     },
     ....
   ]
@@ -78,12 +91,18 @@ On all calls listed above, you can add optionally the following query-parameters
 **Remark:** 'totals' are available by /all and /country. It's the sum over all countries/areas, hence you can get the totals for Switzerland with /country/CH.
 If no date-query-parameter is set, the last day per area is taken to build the sum.
 
+**Forwarded values:** Field-names ending with "_fwd" are never empty.
+Instead the value from the previous date is taken. For many usecases (e.
+g. aggregate totals), the fwd-fields are the preferred choice. The field
+without _fwd is empty, if no value was reported by a canton for that
+date.
+
 #### Ouptut csv
 ```
-"date","time","abbreviation_canton_and_fl","ncumul_tested","ncumul_conf","ncumul_hosp","ncumul_ICU","ncumul_vent","ncumul_released","ncumul_deceased","source","ncumul_confirmed_non_resident","ninst_hosp_non_resident","ncumul_ICF","ninst_ICU_intub","ncumul_deceased_suspect","TotalPosTests1","TotalCured"
-"2020-04-01","15:00","AG","",549,94,27,27,"",11,"https://www.ag.ch/media/kanton_aargau/themen_1/coronavirus_1/lagebulletins/200401_KFS_Coronavirus_Lagebulletin_24.pdf",,,,,,,
-"2020-04-01","17:00","AR","",61,"","","","",3,"https://www.ar.ch/verwaltung/departement-gesundheit-und-soziales/amt-fuer-gesundheit/informationsseite-coronavirus/",,,,,,,
-"2020-04-01","08:00","BE","",909,115,26,21,"",20,"https://www.besondere-lage.sites.be.ch/besondere-lage_sites/de/index/corona/index.html",,,,,,,
+date","time","abbreviation_canton_and_fl","ncumul_tested","ncumul_conf","ncumul_hosp","ncumul_ICU","ncumul_vent","ncumul_released","ncumul_deceased","source","ncumul_tested_fwd","ncumul_conf_fwd","ncumul_hosp_fwd","ncumul_ICU_fwd","ncumul_vent_fwd","ncumul_released_fwd","ncumul_deceased_fwd","ncumul_confirmed_non_resident","ninst_hosp_non_resident","ncumul_ICF","ninst_ICU_intub","ncumul_deceased_suspect","TotalPosTests1"
+"2020-03-22","12:00","AG","",232,"","","","",1,"https://www.ag.ch/de/aktuelles/medienportal/medienmitteilung/medienmitteilungen/mediendetails_139237.jsp",0,232,25,4,2,4,1,,,,,,
+"2020-03-22","","BL","",289,40,7,"",21,3,"https://www.baselland.ch/politik-und-behorden/direktionen/volkswirtschafts-und-gesundheitsdirektion/medienmitteilungen/update-289-bestaetigte-faelle-in-basel-landschaft",0,289,40,7,0,21,3,,,,,,
+"2020-03-22","10:30","BS","",358,50,"","",73,5,"https://www.coronavirus.bs.ch/nm/2020-tagesbulletin-coronavirus-358-bestaetigte-faelle-im-kanton-basel-stadt-gd.html",235,358,50,2,0,73,5,265,"",,,,
 ```
 **Remark:** There is no 'totals' available in csv-output.
 
@@ -191,3 +210,10 @@ critism or something else to say? <br> <a
 href="https://twitter.com/intent/tweet?screen_name=APfeuti&ref_src=twsrc%5Etfw"
 class="twitter-mention-button" data-show-count="false">Tweet to
 @APfeuti</a>
+
+## Change-Log
+
+| Date       | Topic                                       |
+|------------|---------------------------------------------|
+| 2020-04-07 | Added forward-fields, which are never empty |
+   

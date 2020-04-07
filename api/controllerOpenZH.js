@@ -17,7 +17,7 @@ cron.schedule('* * * * *', function () {
 });
 
 exports.doc = function (req, res) {
-  res.redirect('https://github.com/apfeuti/covid19-rest');
+    res.redirect('https://github.com/apfeuti/covid19-rest');
 };
 
 exports.allData = function (req, res) {
@@ -30,11 +30,11 @@ exports.allData = function (req, res) {
 };
 
 exports.findByCountry = function (req, res) {
-    var data = [] ;
+    var data = [];
 
     if (req.params.country.toUpperCase() === 'CH') {
         data = allDataCH;
-    }  else if (req.params.country.toUpperCase() === 'FL') {
+    } else if (req.params.country.toUpperCase() === 'FL') {
         data = allDataFL;
     }
 
@@ -91,13 +91,83 @@ function loadData() {
             checkType: true
         })
             .fromStream(request.get('https://raw.githubusercontent.com/openZH/covid_19/master/fallzahlen_kanton_total_csv/COVID19_Fallzahlen_FL_total.csv'))
-            .then(dataAsJson => allDataFL = dataAsJson);
+            .then(dataAsJson => {
+                allDataFL = dataAsJson;
+                addForwardedValues(allDataFL);
+            });
 
     });
 
-   Promise.all(promises)
-       .then(jsonPerArea => allDataCH = allDataCH.concat(jsonPerArea).flat());
+    Promise.all(promises)
+        .then(jsonPerArea => {
+            allDataCH = allDataCH.concat(jsonPerArea).flat();
+            addForwardedValues(allDataCH);
+        });
 
+}
+
+// If for a particular date a value is not reported by the canton, then openZH reports an empty value (does not forward from previous date).
+// This behaviour was discussed on several issues in GitHub and has its reasons. However for many usecases (eg. build aggregated total-values)
+// non-empty values are much more practical (instead of empty value, take value from previous-date).
+// See https://github.com/openZH/covid_19/issues/459 and referenced issues.
+function addForwardedValues(data) {
+    var groupedByArea = groupBy(data, 'abbreviation_canton_and_fl');
+
+    Object.entries(groupedByArea).forEach(([key, rowsPerArea]) => {
+        var previousRow = null;
+        rowsPerArea.forEach(row => {
+            if (previousRow === null) {
+                {
+                    // init previousRow
+                    previousRow = {
+                        ncumul_tested_fwd: 0,
+                        ncumul_conf_fwd: 0,
+                        ncumul_hosp_fwd: 0,
+                        ncumul_ICU_fwd: 0,
+                        ncumul_vent_fwd: 0,
+                        ncumul_released_fwd: 0,
+                        ncumul_deceased_fwd: 0
+                    }
+                }
+            }
+            row.ncumul_tested_fwd = row.ncumul_tested;
+            if (row.ncumul_tested_fwd === '') {
+                row.ncumul_tested_fwd = previousRow.ncumul_tested_fwd;
+            }
+
+            row.ncumul_conf_fwd = row.ncumul_conf;
+            if (row.ncumul_conf_fwd === '') {
+                row.ncumul_conf_fwd = previousRow.ncumul_conf_fwd;
+            }
+
+            row.ncumul_hosp_fwd = row.ncumul_hosp;
+            if (row.ncumul_hosp_fwd === '') {
+                row.ncumul_hosp_fwd = previousRow.ncumul_hosp_fwd;
+            }
+
+            row.ncumul_ICU_fwd = row.ncumul_ICU;
+            if (row.ncumul_ICU_fwd === '') {
+                row.ncumul_ICU_fwd = previousRow.ncumul_ICU_fwd;
+            }
+
+            row.ncumul_vent_fwd = row.ncumul_vent;
+            if (row.ncumul_vent_fwd === '') {
+                row.ncumul_vent_fwd = previousRow.ncumul_vent_fwd;
+            }
+
+            row.ncumul_released_fwd = row.ncumul_released;
+            if (row.ncumul_released_fwd === '') {
+                row.ncumul_released_fwd = previousRow.ncumul_released_fwd;
+            }
+
+            row.ncumul_deceased_fwd = row.ncumul_deceased;
+            if (row.ncumul_deceased_fwd === '') {
+                row.ncumul_deceased_fwd = previousRow.ncumul_deceased_fwd;
+            }
+
+            previousRow = row;
+        });
+    });
 }
 
 function applyFilters(data, query) {
@@ -135,22 +205,22 @@ function calculateTotalsIfJson(data, req) {
     mostRecentOfEachArea = mostRecentOfEachArea.flat();
 
 
-    return  {
-        ncumul_tested: mostRecentOfEachArea.map(row => parseInt(row.ncumul_tested) || 0).reduce((acc, value) => acc + value),
-        ncumul_conf: mostRecentOfEachArea.map(row => parseInt(row.ncumul_conf) || 0).reduce((acc, value) => acc + value),
-        ncumul_hosp: mostRecentOfEachArea.map(row => parseInt(row.ncumul_hosp) || 0).reduce((acc, value) => acc + value),
-        ncumul_ICU: mostRecentOfEachArea.map(row => parseInt(row.ncumul_ICU) || 0).reduce((acc, value) => acc + value),
-        ncumul_vent: mostRecentOfEachArea.map(row => parseInt(row.ncumul_vent) || 0).reduce((acc, value) => acc + value),
-        ncumul_released: mostRecentOfEachArea.map(row => parseInt(row.ncumul_released) || 0).reduce((acc, value) => acc + value),
-        ncumul_deceased: mostRecentOfEachArea.map(row => parseInt(row.ncumul_deceased) || 0).reduce((acc, value) => acc + value)
+    return {
+        ncumul_tested_fwd: mostRecentOfEachArea.map(row => parseInt(row.ncumul_tested_fwd) || 0).reduce((acc, value) => acc + value),
+        ncumul_conf_fwd: mostRecentOfEachArea.map(row => parseInt(row.ncumul_conf_fwd) || 0).reduce((acc, value) => acc + value),
+        ncumul_hosp_fwd: mostRecentOfEachArea.map(row => parseInt(row.ncumul_hosp_fwd) || 0).reduce((acc, value) => acc + value),
+        ncumul_ICU_fwd: mostRecentOfEachArea.map(row => parseInt(row.ncumul_ICU_fwd) || 0).reduce((acc, value) => acc + value),
+        ncumul_vent_fwd: mostRecentOfEachArea.map(row => parseInt(row.ncumul_vent_fwd) || 0).reduce((acc, value) => acc + value),
+        ncumul_released_fwd: mostRecentOfEachArea.map(row => parseInt(row.ncumul_released_fwd) || 0).reduce((acc, value) => acc + value),
+        ncumul_deceased_fwd: mostRecentOfEachArea.map(row => parseInt(row.ncumul_deceased_fwd) || 0).reduce((acc, value) => acc + value)
     };
 }
 
 // credits goes to https://stackoverflow.com/questions/14446511/most-efficient-method-to-groupby-on-an-array-of-objects
-var groupBy = function(data, key) { // `data` is an array of objects, `key` is the key (or property accessor) to group by
-                                    // reduce runs this anonymous function on each element of `data` (the `item` parameter,
-                                    // returning the `storage` parameter at the end
-    return data.reduce(function(storage, item) {
+var groupBy = function (data, key) { // `data` is an array of objects, `key` is the key (or property accessor) to group by
+    // reduce runs this anonymous function on each element of `data` (the `item` parameter,
+    // returning the `storage` parameter at the end
+    return data.reduce(function (storage, item) {
         // get the first instance of the key by which we're grouping
         var group = item[key];
 
