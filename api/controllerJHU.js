@@ -355,7 +355,9 @@ function applyFilters() {
 function postProcess(data, req, res) {
     var outputData = {};
     outputData['totals'] = calculateTotalsIfJson(data, req);
-    outputData['records'] = mapToOutput(data);
+    if (!req.query.skipRecords || req.query.skipRecords.toLowerCase() !== 'true') {
+        outputData['records'] = mapToOutput(data);
+    }
     makeOutput(outputData, req.query, res);
 }
 

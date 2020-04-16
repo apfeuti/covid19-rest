@@ -30,6 +30,7 @@ On all calls listed above, you can add optionally the following query-parameters
 |Parameter              | Remark                                             | Example call                                                                             | 
 |-----------------------|----------------------------------------------------|------------------------------------------------------------------------------------------|
 | date=\<yyyy-mm-dd>    | only data for the given date. Format: yyyy-mm-dd   | [https://covid19-rest.herokuapp.com/api/openzh/v1/country/CH?date=2020-03-23]            |
+| skipRecords=true      | returns only "totals" and NO "records"             | [https://covid19-rest.herokuapp.com/api/openzh/v1/all?skipRecords=true]                  |
 | output=csv            | output in csv instead of json                      | [https://covid19-rest.herokuapp.com/api/openzh/v1/country/CH?date=2020-03-23&output=csv] |
 
 #### Output json
@@ -121,7 +122,8 @@ On all calls listed above, you can add optionally the following query-parameters
 |Parameter              | Remark                                             | Example call                                                                                         |
 |-----------------------|----------------------------------------------------|------------------------------------------------------------------------------------------------------|
 | date=\<yyyy-mm-dd>    | only data for the given date. Format: yyyy-mm-dd   | [https://covid19-rest.herokuapp.com/api/jhu/v1/country/ITA?date=2020-03-31]                          |
-| output=csv            | output in csv instead of json                      | [https://covid19-rest.herokuapp.com/api/jhu/v1/country/CHN/area/hubei?date=2020-03-23&output=csv]    |
+| skipRecords=true      | returns only "totals" and NO "records"             | [https://covid19-rest.herokuapp.com/api/jhu/v1/all?skipRecords=true]                                 |
+| output=csv            | output in csv instead of json                      |[https://covid19-rest.herokuapp.com/api/jhu/v1/country/CHN/area/hubei?date=2020-03-23&output=csv]     |
 
 #### Output json
 ```json
@@ -215,5 +217,6 @@ class="twitter-mention-button" data-show-count="false">Tweet to
 
 | Date       | Topic                                       |
 |------------|---------------------------------------------|
+| 2020-04-16 | Added query-parameter skipRecords=true      |
 | 2020-04-07 | Added forward-fields, which are never empty |
    

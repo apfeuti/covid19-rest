@@ -24,7 +24,11 @@ exports.allData = function (req, res) {
     var data = applyFilters(allDataCH.concat(allDataFL), req.query);
     var outputData = {};
     outputData['totals'] = calculateTotalsIfJson(data, req);
-    outputData['records'] = data;
+
+    if (!req.query.skipRecords || req.query.skipRecords.toLowerCase() !== 'true') {
+        outputData['records'] = data;
+    }
+
     makeOutput(outputData, req.query, res);
 
 };
@@ -41,7 +45,11 @@ exports.findByCountry = function (req, res) {
     var filteredData = applyFilters(data, req.query);
     var outputData = {};
     outputData['totals'] = calculateTotalsIfJson(filteredData, req);
-    outputData['records'] = filteredData;
+
+    if (!req.query.skipRecords || req.query.skipRecords.toLowerCase() !== 'true') {
+        outputData['records'] = filteredData;
+    }
+
     makeOutput(outputData, req.query, res);
 
 };
@@ -56,7 +64,10 @@ exports.findByArea = function (req, res) {
     }
     var filteredData = applyFilters(data, req.query);
     var outputData = {};
-    outputData['records'] = filteredData;
+
+    if (!req.query.skipRecords || req.query.skipRecords.toLowerCase() !== 'true') {
+        outputData['records'] = filteredData;
+    }
     makeOutput(outputData, req.query, res);
 };
 
