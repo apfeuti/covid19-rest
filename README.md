@@ -1,7 +1,7 @@
 # COVID19 REST-API
 This is a REST-API to get data about COVID19 (new corona-virus) cases.
 Data sources are
-[Open Data Kanton Zürich (openZH)](https://github.com/openZH/covid_19/tree/master/fallzahlen_kanton_total_csv)
+[Open Data Kanton Zürich (openZH)](https://github.com/openZH/covid_19/tree/master/fallzahlen_kanton_total_csv_v2)
 (for **detailed figures about Switzerland**) and
 [Johns Hopkins University](https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_daily_reports)
 (for figures about the world - **including detailed data on city-level
@@ -33,57 +33,90 @@ On all calls listed above, you can add optionally the following query-parameters
 | skipRecords=true      | returns only "totals" and NO "records"             | [https://covid19-rest.herokuapp.com/api/openzh/v1/all?skipRecords=true]                  |
 | output=csv            | output in csv instead of json                      | [https://covid19-rest.herokuapp.com/api/openzh/v1/country/CH?date=2020-03-23&output=csv] |
 
+#### Deprecated fields
+Please upgrade your client to the renamed fields (renamed by openzh).
+**The deprecated fields will be removed on May 14, 2020** This concerns
+fields in "totals" and "records".
+
+| Deprecated field | new field-name     |
+|------------------|--------------------|
+| ncumul_hosp      | current_hosp       |
+| ncumul_ICU       | current_icu        |
+| ncumul_vent      | current_vent       |
+| ncumul_hosp_fwd  | current_hosp_fwd   |
+| ncumul_ICU _fwd  | current_icu_fwd    |
+| ncumul_vent_fwd  | current_vent_fwd   |
+
+
 #### Output json
 ```json
-{"totals": {
-    "ncumul_tested_fwd": 8219,
-    "ncumul_conf_fwd": 6561,
-    "ncumul_hosp_fwd": 906,
-    "ncumul_ICU_fwd": 140,
-    "ncumul_vent_fwd": 87,
-    "ncumul_released_fwd": 177,
-    "ncumul_deceased_fwd": 96
+{
+  "totals": {
+    "ncumul_tested_fwd": 21469,
+    "ncumul_conf_fwd": 26467,
+    "ncumul_hosp_fwd": 1769,
+    "ncumul_ICU_fwd": 330,
+    "ncumul_vent_fwd": 208,
+    "current_hosp_fwd": 1769,
+    "current_icu_fwd": 330,
+    "current_vent_fwd": 208,
+    "ncumul_released_fwd": 3720,
+    "ncumul_deceased_fwd": 1262
   },
   "records": [
     {
-      "date": "2020-03-22",
-      "time": "12:00",
+      "date": "2020-04-15",
+      "time": "14:45",
       "abbreviation_canton_and_fl": "AG",
       "ncumul_tested": "",
-      "ncumul_conf": 232,
+      "ncumul_conf": 929,
+      "new_hosp": "",
+      "current_hosp": 69,
+      "current_icu": 20,
+      "current_vent": 20,
+      "ncumul_released": 450,
+      "ncumul_deceased": 22,
+      "source": "https://www.ag.ch/media/kanton_aargau/themen_1/coronavirus_1/lagebulletins/200415_KFS_Coronavirus_Lagebulletin_33.pdf",
+      "ncumul_tested_fwd": 0,
+      "ncumul_conf_fwd": 929,
+      "ncumul_hosp": 69,
+      "ncumul_ICU": 20,
+      "ncumul_vent": 20,
+      "ncumul_hosp_fwd": 69,
+      "ncumul_ICU_fwd": 20,
+      "ncumul_vent_fwd": 20,
+      "current_hosp_fwd": 69,
+      "current_icu_fwd": 20,
+      "current_vent_fwd": 20,
+      "ncumul_released_fwd": 450,
+      "ncumul_deceased_fwd": 22
+    },
+    {
+      "date": "2020-04-15",
+      "time": "11:00",
+      "abbreviation_canton_and_fl": "AI",
+      "ncumul_tested": "",
+      "ncumul_conf": 24,
+      "new_hosp": "",
+      "current_hosp": "",
+      "current_icu": "",
+      "current_vent": "",
+      "ncumul_released": "",
+      "ncumul_deceased": "",
+      "source": "https://www.ai.ch/themen/gesundheit-alter-und-soziales/gesundheitsfoerderung-und-praevention/uebertragbare-krankheiten/coronavirus",
+      "ncumul_tested_fwd": 0,
+      "ncumul_conf_fwd": 24,
       "ncumul_hosp": "",
       "ncumul_ICU": "",
       "ncumul_vent": "",
-      "ncumul_released": "",
-      "ncumul_deceased": 1,
-      "source": "https://www.ag.ch/de/aktuelles/medienportal/medienmitteilung/medienmitteilungen/mediendetails_139237.jsp",
-      "ncumul_tested_fwd": 0,
-      "ncumul_conf_fwd": 232,
-      "ncumul_hosp_fwd": 25,
-      "ncumul_ICU_fwd": 4,
-      "ncumul_vent_fwd": 2,
-      "ncumul_released_fwd": 4,
-      "ncumul_deceased_fwd": 1
-    },
-    {
-      "date": "2020-03-22",
-      "time": "",
-      "abbreviation_canton_and_fl": "BL",
-      "ncumul_tested": "",
-      "ncumul_conf": 289,
-      "ncumul_hosp": 40,
-      "ncumul_ICU": 7,
-      "ncumul_vent": "",
-      "ncumul_released": 21,
-      "ncumul_deceased": 3,
-      "source": "https://www.baselland.ch/politik-und-behorden/direktionen/volkswirtschafts-und-gesundheitsdirektion/medienmitteilungen/update-289-bestaetigte-faelle-in-basel-landschaft",
-      "ncumul_tested_fwd": 0,
-      "ncumul_conf_fwd": 289,
-      "ncumul_hosp_fwd": 40,
-      "ncumul_ICU_fwd": 7,
+      "ncumul_hosp_fwd": 1,
+      "ncumul_ICU_fwd": 0,
       "ncumul_vent_fwd": 0,
-      "ncumul_released_fwd": 21,
-      "ncumul_deceased_fwd": 3
+      "current_hosp_fwd": 1,
+      "current_icu_fwd": 0,
+      "current_vent_fwd": 0,
+      "ncumul_released_fwd": 0,
+      "ncumul_deceased_fwd": 0
     },
     ....
   ]
@@ -100,10 +133,10 @@ date.
 
 #### Ouptut csv
 ```
-date","time","abbreviation_canton_and_fl","ncumul_tested","ncumul_conf","ncumul_hosp","ncumul_ICU","ncumul_vent","ncumul_released","ncumul_deceased","source","ncumul_tested_fwd","ncumul_conf_fwd","ncumul_hosp_fwd","ncumul_ICU_fwd","ncumul_vent_fwd","ncumul_released_fwd","ncumul_deceased_fwd","ncumul_confirmed_non_resident","ninst_hosp_non_resident","ncumul_ICF","ninst_ICU_intub","ncumul_deceased_suspect","TotalPosTests1"
-"2020-03-22","12:00","AG","",232,"","","","",1,"https://www.ag.ch/de/aktuelles/medienportal/medienmitteilung/medienmitteilungen/mediendetails_139237.jsp",0,232,25,4,2,4,1,,,,,,
-"2020-03-22","","BL","",289,40,7,"",21,3,"https://www.baselland.ch/politik-und-behorden/direktionen/volkswirtschafts-und-gesundheitsdirektion/medienmitteilungen/update-289-bestaetigte-faelle-in-basel-landschaft",0,289,40,7,0,21,3,,,,,,
-"2020-03-22","10:30","BS","",358,50,"","",73,5,"https://www.coronavirus.bs.ch/nm/2020-tagesbulletin-coronavirus-358-bestaetigte-faelle-im-kanton-basel-stadt-gd.html",235,358,50,2,0,73,5,265,"",,,,
+"date","time","abbreviation_canton_and_fl","ncumul_tested","ncumul_conf","new_hosp","current_hosp","current_icu","current_vent","ncumul_released","ncumul_deceased","source","ncumul_tested_fwd","ncumul_conf_fwd","ncumul_hosp","ncumul_ICU","ncumul_vent","ncumul_hosp_fwd","ncumul_ICU_fwd","ncumul_vent_fwd","current_hosp_fwd","current_icu_fwd","current_vent_fwd","ncumul_released_fwd","ncumul_deceased_fwd","ncumul_confirmed_non_resident","current_hosp_non_resident","ncumul_ICF","ncumul_deceased_suspect","TotalPosTests1","ninst_ICU_intub"
+"2020-04-15","14:45","AG","",929,"",69,20,20,450,22,"https://www.ag.ch/media/kanton_aargau/themen_1/coronavirus_1/lagebulletins/200415_KFS_Coronavirus_Lagebulletin_33.pdf",0,929,69,20,20,69,20,20,69,20,20,450,22,,,,,,
+"2020-04-15","11:00","AI","",24,"","","","","","","https://www.ai.ch/themen/gesundheit-alter-und-soziales/gesundheitsfoerderung-und-praevention/uebertragbare-krankheiten/coronavirus",0,24,"","","",1,0,0,1,0,0,0,0,,,,,,
+"2020-04-15","08:00","AR","",79,"","","","","",3,"https://www.ar.ch/verwaltung/departement-gesundheit-und-soziales/amt-fuer-gesundheit/informationsseite-coronavirus/",0,79,"","","",6,0,0,6,0,0,0,3,,,,,,
 ```
 **Remark:** There is no 'totals' available in csv-output.
 
@@ -215,8 +248,9 @@ class="twitter-mention-button" data-show-count="false">Tweet to
 
 ## Change-Log
 
-| Date       | Topic                                       |
-|------------|---------------------------------------------|
-| 2020-04-16 | Added query-parameter skipRecords=true      |
-| 2020-04-07 | Added forward-fields, which are never empty |
+| Date       | Topic                                                                 |
+|------------|-----------------------------------------------------------------------|
+| 2020-04-16 | Using v2-data of openZH. See [Deprecated fields](#Deprecated-fields)  |
+| 2020-04-16 | Added query-parameter skipRecords=true                                | 
+| 2020-04-07 | Added forward-fields, which are never empty                           |
    

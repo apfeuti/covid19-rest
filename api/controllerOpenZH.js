@@ -77,7 +77,7 @@ function loadData() {
     const promises = [];
 
     areas.forEach((area, index) => {
-        var dataLocation = 'https://raw.githubusercontent.com/openZH/covid_19/master/fallzahlen_kanton_total_csv/COVID19_Fallzahlen_Kanton_' + area + '_total.csv';
+        var dataLocation = 'https://raw.githubusercontent.com/openZH/covid_19/master/fallzahlen_kanton_total_csv_v2/COVID19_Fallzahlen_Kanton_' + area + '_total.csv';
 
         promises.push(
             csv({
@@ -101,7 +101,7 @@ function loadData() {
         csv({
             checkType: true
         })
-            .fromStream(request.get('https://raw.githubusercontent.com/openZH/covid_19/master/fallzahlen_kanton_total_csv/COVID19_Fallzahlen_FL_total.csv'))
+            .fromStream(request.get('https://raw.githubusercontent.com/openZH/covid_19/master/fallzahlen_kanton_total_csv_v2/COVID19_Fallzahlen_FL_total.csv'))
             .then(dataAsJson => {
                 allDataFL = dataAsJson;
                 addForwardedValues(allDataFL);
@@ -133,9 +133,12 @@ function addForwardedValues(data) {
                     previousRow = {
                         ncumul_tested_fwd: 0,
                         ncumul_conf_fwd: 0,
-                        ncumul_hosp_fwd: 0,
-                        ncumul_ICU_fwd: 0,
-                        ncumul_vent_fwd: 0,
+                        ncumul_hosp_fwd: 0, // deprecated
+                        ncumul_ICU_fwd: 0,  // deprecated
+                        ncumul_vent_fwd: 0, // deprecated
+                        current_hosp_fwd: 0,
+                        current_icu_fwd: 0,
+                        current_vent_fwd: 0,
                         ncumul_released_fwd: 0,
                         ncumul_deceased_fwd: 0
                     }
@@ -151,19 +154,42 @@ function addForwardedValues(data) {
                 row.ncumul_conf_fwd = previousRow.ncumul_conf_fwd;
             }
 
+            // added for backward-compatibility, but is deprecated
+            row.ncumul_hosp = row.current_hosp;
+            row.ncumul_ICU = row.current_icu;
+            row.ncumul_vent = row.current_vent;
+
+            // deprecated
             row.ncumul_hosp_fwd = row.ncumul_hosp;
             if (row.ncumul_hosp_fwd === '') {
                 row.ncumul_hosp_fwd = previousRow.ncumul_hosp_fwd;
             }
 
+            // deprecated
             row.ncumul_ICU_fwd = row.ncumul_ICU;
             if (row.ncumul_ICU_fwd === '') {
                 row.ncumul_ICU_fwd = previousRow.ncumul_ICU_fwd;
             }
 
+            // deprecated
             row.ncumul_vent_fwd = row.ncumul_vent;
             if (row.ncumul_vent_fwd === '') {
                 row.ncumul_vent_fwd = previousRow.ncumul_vent_fwd;
+            }
+
+            row.current_hosp_fwd = row.current_hosp;
+            if (row.current_hosp_fwd === '') {
+                row.current_hosp_fwd = previousRow.current_hosp_fwd;
+            }
+
+            row.current_icu_fwd = row.current_icu;
+            if (row.current_icu_fwd === '') {
+                row.current_icu_fwd = previousRow.current_icu_fwd;
+            }
+
+            row.current_vent_fwd = row.current_vent;
+            if (row.current_vent_fwd === '') {
+                row.current_vent_fwd = previousRow.current_vent_fwd;
             }
 
             row.ncumul_released_fwd = row.ncumul_released;
@@ -219,9 +245,18 @@ function calculateTotalsIfJson(data, req) {
     return {
         ncumul_tested_fwd: mostRecentOfEachArea.map(row => parseInt(row.ncumul_tested_fwd) || 0).reduce((acc, value) => acc + value),
         ncumul_conf_fwd: mostRecentOfEachArea.map(row => parseInt(row.ncumul_conf_fwd) || 0).reduce((acc, value) => acc + value),
+
+        // deprecated
         ncumul_hosp_fwd: mostRecentOfEachArea.map(row => parseInt(row.ncumul_hosp_fwd) || 0).reduce((acc, value) => acc + value),
+        // deprecated
         ncumul_ICU_fwd: mostRecentOfEachArea.map(row => parseInt(row.ncumul_ICU_fwd) || 0).reduce((acc, value) => acc + value),
+        // dprecated
         ncumul_vent_fwd: mostRecentOfEachArea.map(row => parseInt(row.ncumul_vent_fwd) || 0).reduce((acc, value) => acc + value),
+
+        current_hosp_fwd: mostRecentOfEachArea.map(row => parseInt(row.current_hosp_fwd) || 0).reduce((acc, value) => acc + value),
+        current_icu_fwd: mostRecentOfEachArea.map(row => parseInt(row.current_icu_fwd) || 0).reduce((acc, value) => acc + value),
+        current_vent_fwd: mostRecentOfEachArea.map(row => parseInt(row.current_vent_fwd) || 0).reduce((acc, value) => acc + value),
+
         ncumul_released_fwd: mostRecentOfEachArea.map(row => parseInt(row.ncumul_released_fwd) || 0).reduce((acc, value) => acc + value),
         ncumul_deceased_fwd: mostRecentOfEachArea.map(row => parseInt(row.ncumul_deceased_fwd) || 0).reduce((acc, value) => acc + value)
     };
