@@ -6,6 +6,7 @@ const request = require('request');
 const cron = require('node-cron');
 const _ = require('lodash/lang');
 const countryMapping = require('./countryMapping');
+const sizeof = require('object-sizeof');
 
 var allDataWorld = new Map();
 
@@ -24,6 +25,8 @@ exports.allData = function (req, res) {
 
     data = applyFilters(data, req, dateFilter);
     postProcess(data, req, res);
+
+    console.log(process.memoryUsage());
 };
 
 exports.findByCountry = function (req, res) {
@@ -247,12 +250,17 @@ function buildStructuredMap(allDataFlat) {
         });
     });
 
+    var memory = 0;
     // verify if all rows are ordered by date
     allDataWorld.forEach(country => {
+        memory += sizeof(country);
         country.areas.forEach(area => {
+            memory += sizeof(area);
             area.admins.forEach(admin => {
+                memory += sizeof(admin);
                 var previousDate = '1900-01-01';
                 admin.rows.forEach(row => {
+                    memory += sizeof(row);
                     if (row.date <= previousDate) {
                         console.error("Rows not correctly ordered: Country: " + country.country + ". Area: " + area.area + ". Admin: " + admin.admin + ". Current-Row-Date: " + row.date + ". Previous-Row-Date:" + previousDate);
                         previousDate = row.date;
@@ -261,6 +269,8 @@ function buildStructuredMap(allDataFlat) {
             })
         })
     });
+    console.log("Memory (MB): " + memory / 1000 / 1000);
+    console.log(process.memoryUsage());
 
 }
 
@@ -324,6 +334,8 @@ function adminFilter(data, req) {
 }
 
 function dateFilter(data, req) {
+    console.log("Before Filter: ");
+    console.log(process.memoryUsage());
     if (req.query.date) {
         // very important to deep-clone, otherwise the allDataWorld-data-holder is mutated!
         var dataClone = _.cloneDeep(data);
@@ -336,6 +348,8 @@ function dateFilter(data, req) {
             })
         });
     }
+    console.log("After Filter: ");
+    console.log(process.memoryUsage());
     return dataClone || data;
 }
 
