@@ -141,6 +141,12 @@ date.
 **Remark:** There is no 'totals' available in csv-output.
 
 ### API for Johns Hopkins University (JHU) (data for world)
+
+<span style="color:red">Currently not deployed on the Heroku-Server,
+because of too less memory on this server. If you need this API, deploy
+it on your own server/laptop. Follow this [guideline](#Developers)
+</span>
+
 | Method | API                                                       | Remark                                                                                                                                                                                                                                                                    | Example call                                                                               |
 |:-------|:----------------------------------------------------------|:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:-------------------------------------------------------------------------------------------|
 | GET    | /api/doc                                                  | currently a redirect to this github-readme                                                                                                                                                                                                                                | [https://covid19-rest.herokuapp.com/api/doc]                                               |
