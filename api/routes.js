@@ -1,7 +1,7 @@
 'use strict';
 module.exports = function(app) {
     var controller = require('./controllerOpenZH');
-    var controllerJUH = require('./controllerJHU');
+   // var controllerJUH = require('./controllerJHU');
 
     const openZHV1 = '/api/openzh/v1';
     const jhuV1 = '/api/jhu/v1';
@@ -19,16 +19,16 @@ module.exports = function(app) {
         .get(controller.findByArea);
 
 
-    app.route(jhuV1 + '/all')
-        .get(controllerJUH.allData);
-
-    app.route(jhuV1 + '/country/:country')
-        .get(controllerJUH.findByCountry);
-
-    app.route(jhuV1 + '/country/:country/area/:area')
-        .get(controllerJUH.findByArea);
-
-    app.route(jhuV1 + '/country/:country/area/:area/admin/:admin')
-        .get(controllerJUH.findByAdmin);
+    // app.route(jhuV1 + '/all')
+    //     .get(controllerJUH.allData);
+    //
+    // app.route(jhuV1 + '/country/:country')
+    //     .get(controllerJUH.findByCountry);
+    //
+    // app.route(jhuV1 + '/country/:country/area/:area')
+    //     .get(controllerJUH.findByArea);
+    //
+    // app.route(jhuV1 + '/country/:country/area/:area/admin/:admin')
+    //     .get(controllerJUH.findByAdmin);
 
 };
