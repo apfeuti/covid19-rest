@@ -1,5 +1,5 @@
 {
-  "name": "ovid19-rest",
+  "name": "covid19-rest",
   "version": "1.0.0",
   "description": "A rest-api for the COVID19-data in Switzerland, collected by openZH. See https://github.com/openZH/covid_19",
   "main": "server.js",
