@@ -1,4 +1,5 @@
 'use strict';
+
 module.exports = function(app) {
     var controller = require('./controllerOpenZH');
     var controllerJUH = require('./controllerJHU');
