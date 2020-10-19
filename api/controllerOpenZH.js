@@ -97,24 +97,58 @@ function loadData() {
                     });
                 })
         );
-
-        csv({
-            checkType: true
-        })
-            .fromStream(request.get('https://raw.githubusercontent.com/openZH/covid_19/master/fallzahlen_kanton_total_csv_v2/COVID19_Fallzahlen_FL_total.csv'))
-            .then(dataAsJson => {
-                allDataFL = dataAsJson;
-                addForwardedValues(allDataFL);
-            });
-
     });
+
+    csv({
+        checkType: true
+    })
+        .fromStream(request.get('https://raw.githubusercontent.com/openZH/covid_19/master/fallzahlen_kanton_total_csv_v2/COVID19_Fallzahlen_FL_total.csv'))
+        .then(dataAsJson => {
+            allDataFL = dataAsJson;
+            allDataFL = insertMissingDays(allDataFL)
+            addForwardedValues(allDataFL);
+        });
 
     Promise.all(promises)
         .then(jsonPerArea => {
             allDataCH = allDataCH.concat(jsonPerArea).flat();
+            allDataCH = insertMissingDays(allDataCH)
             addForwardedValues(allDataCH);
         });
 
+}
+
+function insertMissingDays(data) {
+    var dataWithoutGaps = []
+    var groupedByArea = groupBy(data, 'abbreviation_canton_and_fl');
+
+    Object.entries(groupedByArea).forEach(([key, rowsPerArea]) => {
+        // check if we have already an entry for today. If not, add an empty row for today
+        if (rowsPerArea[rowsPerArea.length - 1].date !== formatDate_yyyy_mm_dd(new Date())) {
+            rowsPerArea.push(getEmptyRow(new Date(), key))
+        }
+
+        var initDate = new Date(rowsPerArea[0].date)
+        var dayBefore = new Date(initDate.setDate(initDate.getDate() - 1))
+        var rowsWithoutGaps = []
+        rowsPerArea.forEach(row => {
+            var rowDate = new Date(row.date)
+            for (var i=1; i < diffDays(rowDate, dayBefore); i++) {
+                rowsWithoutGaps.push(getEmptyRow(addDays(dayBefore, i), key))
+            }
+            rowsWithoutGaps.push(row)
+            dayBefore = rowDate
+        })
+        dataWithoutGaps = dataWithoutGaps.concat(rowsWithoutGaps)
+    })
+    return dataWithoutGaps
+
+    function getEmptyRow(date, areaKey) {
+        return {
+            date: formatDate_yyyy_mm_dd(date),
+            abbreviation_canton_and_fl: areaKey
+        };
+    }
 }
 
 // If for a particular date a value is not reported by the canton, then openZH reports an empty value (does not forward from previous date).
@@ -145,12 +179,12 @@ function addForwardedValues(data) {
                 }
             }
             row.ncumul_tested_fwd = row.ncumul_tested;
-            if (row.ncumul_tested_fwd === '') {
+            if (row.ncumul_tested_fwd === '' || (typeof row.ncumul_tested_fwd === 'undefined')) {
                 row.ncumul_tested_fwd = previousRow.ncumul_tested_fwd;
             }
 
             row.ncumul_conf_fwd = row.ncumul_conf;
-            if (row.ncumul_conf_fwd === '') {
+            if (row.ncumul_conf_fwd === '' || (typeof row.ncumul_conf_fwd === 'undefined')) {
                 row.ncumul_conf_fwd = previousRow.ncumul_conf_fwd;
             }
 
@@ -161,44 +195,44 @@ function addForwardedValues(data) {
 
             // deprecated
             row.ncumul_hosp_fwd = row.ncumul_hosp;
-            if (row.ncumul_hosp_fwd === '') {
+            if (row.ncumul_hosp_fwd === '' || (typeof row.ncumul_hosp_fwd === 'undefined')) {
                 row.ncumul_hosp_fwd = previousRow.ncumul_hosp_fwd;
             }
 
             // deprecated
             row.ncumul_ICU_fwd = row.ncumul_ICU;
-            if (row.ncumul_ICU_fwd === '') {
+            if (row.ncumul_ICU_fwd === '' || (typeof row.ncumul_ICU_fwd === 'undefined')) {
                 row.ncumul_ICU_fwd = previousRow.ncumul_ICU_fwd;
             }
 
             // deprecated
             row.ncumul_vent_fwd = row.ncumul_vent;
-            if (row.ncumul_vent_fwd === '') {
+            if (row.ncumul_vent_fwd === '' || (typeof row.ncumul_vent_fwd === 'undefined')) {
                 row.ncumul_vent_fwd = previousRow.ncumul_vent_fwd;
             }
 
             row.current_hosp_fwd = row.current_hosp;
-            if (row.current_hosp_fwd === '') {
+            if (row.current_hosp_fwd === '' || (typeof row.current_hosp_fwd === 'undefined')) {
                 row.current_hosp_fwd = previousRow.current_hosp_fwd;
             }
 
             row.current_icu_fwd = row.current_icu;
-            if (row.current_icu_fwd === '') {
+            if (row.current_icu_fwd === '' || (typeof row.current_icu_fwd === 'undefined')) {
                 row.current_icu_fwd = previousRow.current_icu_fwd;
             }
 
             row.current_vent_fwd = row.current_vent;
-            if (row.current_vent_fwd === '') {
+            if (row.current_vent_fwd === '' || (typeof row.current_vent_fwd === 'undefined')) {
                 row.current_vent_fwd = previousRow.current_vent_fwd;
             }
 
             row.ncumul_released_fwd = row.ncumul_released;
-            if (row.ncumul_released_fwd === '') {
+            if (row.ncumul_released_fwd === '' || (typeof row.ncumul_released_fwd === 'undefined')) {
                 row.ncumul_released_fwd = previousRow.ncumul_released_fwd;
             }
 
             row.ncumul_deceased_fwd = row.ncumul_deceased;
-            if (row.ncumul_deceased_fwd === '') {
+            if (row.ncumul_deceased_fwd === '' || (typeof row.ncumul_deceased_fwd === 'undefined')) {
                 row.ncumul_deceased_fwd = previousRow.ncumul_deceased_fwd;
             }
 
@@ -281,6 +315,21 @@ var groupBy = function (data, key) { // `data` is an array of objects, `key` is 
     }, {}); // {} is the initial value of the storage
 };
 
-//console.log(groupBy(['one', 'two', 'three'], 'length'));
+function formatDate_yyyy_mm_dd(date) {
+    var dd = String(date.getDate()).padStart(2, '0');
+    var mm = String(date.getMonth() + 1).padStart(2, '0'); //January is 0!
+    var yyyy = date.getFullYear();
 
-// => {3: ["one", "two"], 5: ["three"]}
+    return yyyy + '-' + mm + '-' + dd;
+}
+
+function diffDays(date1, date2) {
+    const diffTime = Math.abs(date1 - date2);
+    return  Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+}
+
+function addDays(date, days) {
+    var newDate = new Date(date.valueOf());
+    newDate.setDate(newDate.getDate() + days);
+    return newDate
+}

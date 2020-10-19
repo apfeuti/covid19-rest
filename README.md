@@ -254,9 +254,10 @@ class="twitter-mention-button" data-show-count="false">Tweet to
 
 ## Change-Log
 
-| Date       | Topic                                                                 |
-|------------|-----------------------------------------------------------------------|
-| 2020-04-16 | Using v2-data of openZH. See [Deprecated fields](#Deprecated-fields)  |
-| 2020-04-16 | Added query-parameter skipRecords=true                                | 
-| 2020-04-07 | Added forward-fields, which are never empty                           |
+| Date       | Topic                                                                            |
+|------------|----------------------------------------------------------------------------------|
+| 2020-04-16 | Using v2-data of openZH. See [Deprecated fields](#Deprecated-fields)             |
+| 2020-04-16 | Added query-parameter skipRecords=true                                           |
+| 2020-04-07 | Added forward-fields, which are never empty                                      |
+| 2020-10-19 | Added artifical rows for missing days and forward values to this rows (Issue #9) |
    
