@@ -260,4 +260,5 @@ class="twitter-mention-button" data-show-count="false">Tweet to
 | 2020-04-16 | Added query-parameter skipRecords=true                                           |
 | 2020-04-07 | Added forward-fields, which are never empty                                      |
 | 2020-10-19 | Added artifical rows for missing days and forward values to this rows (Issue #9) |
+| 2020-11-03 | Added CORS in response-header                                                    |
    
