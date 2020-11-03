@@ -5,6 +5,8 @@ var express = require('express'),
 //app.use(bodyParser.urlencoded({ extended: true }));
 //app.use(bodyParser.json());
 
+app.use(require('cors')());
+
 var routes = require('./api/routes');
 routes(app);
 
